@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine UI</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Rule Engine UI</h1>
+    <h2>Create Rule</h2>
+    <input type="text" id="ruleString" placeholder="Enter rule string">
+    <button onclick="createRule()">Create Rule</button>
+    <h2>Evaluate Rule</h2>
+    <input type="text" id="ruleId" placeholder="Enter rule ID">
+    <textarea id="jsonData" placeholder="Enter JSON data"></textarea>
+    <button onclick="evaluateRule()">Evaluate Rule</button>
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+
+        async function createRule() {
+            const ruleString = document.getElementById('ruleString').value;
+            try {
+                const response = await axios.post(`${API_URL}/rules`, { ruleString });
+                alert(`Rule created with ID: ${response.data.id}`);
+            } catch (error) {
+                alert(`Error: ${error.response.data.message}`);
+            }
+        }
+
+        async function evaluateRule() {
+            const ruleId = document.getElementById('ruleId').value;
+            const jsonData = JSON.parse(document.getElementById('jsonData').value);
+            try {
+                const response = await axios.post(`${API_URL}/rules/${ruleId}/evaluate`, jsonData);
+                document.getElementById('result').innerText = `Result: ${response.data}`;
+            } catch (error) {
+                alert(`Error: ${error.response.data.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
